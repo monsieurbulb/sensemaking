@@ -49,6 +49,35 @@ When Richard sends a capture (SMS / email / chat) and the capture rule fires:
 9. **Update index.** Refresh `index.json` and `tags-index.json` at the vault root.
 10. **Confirm** to the user with the file path, one‑line summary, and any automation created.
 
+## Shortcut Commands
+
+The assistant recognises message prefixes as commands:
+
+**Write (`!`):**
+- `!n <text>` — Create note from text. AI generates title, auto-tags.
+- `!n` (alone) — Persist previous Q&A exchange as a note.
+- `!na <text>` — Append to last note.
+- `!na` (alone) — Confirm append of last agreed text.
+- `!rem <text>` — "Remember that" — persist verbatim, no processing.
+- `!t <tag>` — Create new tag (ask for confirmation).
+- `!t -1, -3` — Reject suggested tags #1 and #3.
+- `!link <note>` — Add link from current note, then confirm.
+
+**Query (`?`):**
+- `?ln` — Display last note (full + metadata).
+- `?nn` — List new tagged notes from this session.
+- `?shorts` — List all shortcuts.
+- `?t` — Display all vault tags.
+
+**Modify (`+`):**
+- `+t <tag>` — Add existing tag to current note (never creates new tags).
+
+See `docs/SHORTCUTS.md` for the full spec including global rules (verbatim text, no invented tags, auto-tag #contacts/#people/#networks, noise-free links).
+
+## Mesh Protocol
+
+The vault supports cross-vault queries between peers running their own sense-making assistants. Each peer exposes a `/api/sensemaking/mesh` endpoint; a local `mesh/peers.json` registry lists trusted peers and their endpoints. Queries fan out and aggregate results from the whole mesh. See `docs/MESH.md` for the full protocol spec.
+
 ## Recall pipeline
 
 When Richard asks a question that grounds in the vault (the recall rule fires):

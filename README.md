@@ -78,3 +78,18 @@ core/vault/
 ---
 
 Built as v0.1 of the Decent sensemaking assistant. Designed to be portable, open-format, and model-agnostic.
+
+## Zo Rules
+
+Copy each file in `zo-rules/` into your Zo Computer [Settings → AI → Rules](/?t=settings&s=ai&d=rules):
+
+1. **`capture.md`** — Auto-captures SMS, email, and chat messages that look like notes/links/quotes/people/media.
+2. **`recall.md`** — Answers "what have I captured about X?" queries by searching the vault and citing filenames.
+
+### Shortcuts (WIP)
+
+The system recognises Matt's phone-friendly command shorthand — `!n` to capture, `?ln` to recall the last note, `+t` to add tags, and more. Full spec in `docs/SHORTCUTS.md`.
+
+### Mesh Protocol (WIP)
+
+Multiple people running their own sense-making vaults can query each other's "emerging intelligence." Each vault exposes a mesh endpoint; peers register in a local registry. Design doc in `docs/MESH.md`.
