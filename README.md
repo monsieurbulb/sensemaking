@@ -11,13 +11,20 @@ A personal sense-making assistant for Zo Computer. Capture ideas, links, quotes,
 
 ## Setup on your Zo Computer
 
-### 1. Copy the vault
+### 1. Clone into your workspace
 
 ```bash
-cp -r vault/ /home/workspace/core/vault/
+cd /home/workspace
+git clone https://github.com/monsieurbulb/sensemaking.git
 ```
 
-### 2. Install the scripts
+### 2. Copy the core layer
+
+```bash
+cp -r sensemaking/core/ /home/workspace/core/
+```
+
+### 3. Build the initial indexes
 
 ```bash
 cd /home/workspace/core/vault
@@ -25,21 +32,21 @@ bun install  # if capture.ts needs dependencies
 bun run scripts/reindex.ts   # build initial indexes
 ```
 
-### 3. Create the zo.space routes
+### 4. Create the zo.space routes
 
 Go to [Hosting > Sites & Services](/?t=sites) and add two routes:
 
 - `POST /api/sensemaking` (API route) — paste from `zo-routes/api-sensemaking.ts`
 - `GET /sensemaking` (Page route, private) — paste from `zo-routes/page-sensemaking.tsx`
 
-### 4. Add the Zo Rules
+### 5. Add the Zo Rules
 
 Go to [Settings > Rules](/?t=settings&s=ai&d=rules) and add two rules:
 
 - **Capture rule** — paste from `zo-rules/capture.md`
 - **Recall rule** — paste from `zo-rules/recall.md`
 
-### 5. Test from your phone
+### 6. Test from your phone
 
 Text your Zo: `!n https://example.com — interesting because XYZ`
 

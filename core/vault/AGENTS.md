@@ -1,6 +1,6 @@
 # AGENTS.md — Sense‑Making Vault
 
-This file is the spec future Zo sessions follow when reading from or writing to this vault. The vault is Richard's personal knowledge graph, intended to be portable to Matt's Zo Computer as v0.1 of the sense‑making assistant.
+This file is the spec future Zo sessions follow when reading from or writing to this vault. The vault is the personal knowledge graph, intended to be portable to Matt's Zo Computer as v0.1 of the sense‑making assistant.
 
 ## Frontmatter schema (minimal)
 
@@ -36,7 +36,7 @@ url: https://...      # only for type=link
 
 ## Capture pipeline
 
-When Richard sends a capture (SMS / email / chat) and the capture rule fires:
+When a capture (SMS / email / chat) and the capture rule fires:
 
 **Step 0 — Shortcut check.** If the message starts with `!`, `?`, or `+t`, handle it as a shortcut command per `docs/SHORTCUTS.md` before proceeding. Write commands (`!n`, `!na`, `!rem`, `!t`, `!link`) produce notes/tags. Query commands (`?ln`, `?nn`, `?shorts`, `?t`) display vault state. Tag commands (`+t <tag>`) add existing tags. After handling, reply on the same channel with a one-line confirmation.
 
@@ -55,7 +55,7 @@ When Richard sends a capture (SMS / email / chat) and the capture rule fires:
 
 ## Recall pipeline
 
-When Richard asks a question that grounds in the vault (the recall rule fires):
+When a question that grounds in the vault (the recall rule fires):
 
 **Step 0 — Query shortcut check.** If the message starts with `?`, handle it atomically: `?ln` (last note), `?nn` (new session notes), `?shorts` (list shortcuts), `?t` (all tags). Reply on the same channel.
 
@@ -64,7 +64,7 @@ When Richard asks a question that grounds in the vault (the recall rule fires):
 1. Read `index.json` for an overview.
 2. For tag/topic/people queries, scan matching notes by frontmatter first.
 3. For semantic queries, grep the vault contents — open format means ripgrep is fine for v0.1.
-4. **Always cite filenames** (e.g. `notes/2026-04-28-met-matt.md`) so Richard can open them in Obsidian.
+4. **Always cite filenames** (e.g. `notes/2026-04-28-met-matt.md`) so the vault can open them in Obsidian.
 5. If the answer requires synthesis (drafting a paragraph, finding gaps, suggesting connections), pull the source notes first and quote from them.
 6. Never invent notes. If nothing matches, say so.
 
@@ -87,7 +87,7 @@ Full spec: `docs/SHORTCUTS.md`.
 
 These are derived data — safe to delete and regenerate.
 
-## Conservative defaults (chosen on Richard's behalf, override any time)
+## Conservative defaults (chosen on behalf, override any time)
 
 - Filename slug: lowercase, hyphenated, max 6 words taken from intent or first line.
 - If a person is mentioned by first name only and there's exactly one match in `people/`, link to that. If there are multiple matches, drop into `inbox/` and ask.
