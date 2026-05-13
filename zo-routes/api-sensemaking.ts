@@ -31,6 +31,7 @@ function buildTagIndex(entries: Entry[]): Record<string, string[]> {
     }
   }
   writeFileSync(join(VAULT, "tags-index.json"), JSON.stringify(map, null, 2));
+  return map;
 }
 
 function parseNote(content: string): Partial<Entry> {
@@ -123,16 +124,16 @@ export default async (c: Context) => {
     const entries = loadIndex();
     const tagIndex = loadTagIndex();
     const byType: Record<string, number> = {};
-    const topTags: [string, number][] = [];
+    const topTags: { tag: string; count: number }[] = [];
     for (const e of entries) {
       byType[e.type] = (byType[e.type] ?? 0) + 1;
       for (const t of e.tags ?? []) {
-        const existing = topTags.find(([name]) => name === t);
-        if (existing) existing[1]++;
-        else topTags.push([t, 1]);
+        const existing = topTags.find(({ tag }) => tag === t);
+        if (existing) existing.count++;
+        else topTags.push({ tag: t, count: 1 });
       }
     }
-    topTags.sort((a, b) => b[1] - a[1]);
+    topTags.sort((a, b) => b.count - a.count);
     return c.json({ total: entries.length, byType, topTags: topTags.slice(0, 20), recent: entries.slice(-10).reverse(), vault: VAULT });
   }
 
@@ -160,7 +161,7 @@ export default async (c: Context) => {
     const needle = (url.searchParams.get("q") ?? "").toLowerCase();
     if (!needle) return c.json({ results: [] });
     const entries = loadIndex();
-    const matches: [Entry, number][] = [];
+    const matches: { entry: Entry; score: number }[] = [];
     for (const e of entries) {
       let score = 0;
       if (e.title.toLowerCase().includes(needle)) score += 5;
@@ -171,10 +172,10 @@ export default async (c: Context) => {
         const body = readFileSync(join(VAULT, e.path), "utf8").toLowerCase();
         if (body.includes(needle)) score += 1;
       } catch {}
-      if (score > 0) matches.push([e, score]);
+      if (score > 0) matches.push({ entry: e, score });
     }
-    matches.sort((a, b) => b[1] - a[1]);
-    return c.json({ results: matches.map(([e]) => e) });
+    matches.sort((a, b) => b.score - a.score);
+    return c.json({ results: matches.map(m => m.entry) });
   }
 
   if (action === "shortcut") {
