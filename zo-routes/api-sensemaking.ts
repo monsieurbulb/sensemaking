@@ -2,7 +2,7 @@ import type { Context } from "hono";
 import { readFileSync, existsSync, unlinkSync, writeFileSync } from "node:fs";
 import { join, basename } from "node:path";
 
-const VAULT = "/home/workspace/core/vault";
+const VAULT = "/home/workspace/vault";
 
 type Entry = { path: string; type: string; created: string; tags: string[]; people: string[]; intent: string; title: string };
 

@@ -14,15 +14,14 @@ A personal sense-making assistant for Zo Computer. Capture ideas, links, quotes,
 ### 1. Copy the vault
 
 ```bash
-cp -r vault/ /home/workspace/core/vault/
+cp -r vault/ /home/workspace/vault/
 ```
 
-### 2. Install the scripts
+### 2. Build the initial indexes
 
 ```bash
-cd /home/workspace/core/vault
-bun install  # if capture.ts needs dependencies
-bun run scripts/reindex.ts   # build initial indexes
+cd /home/workspace/vault
+bun run scripts/reindex.ts
 ```
 
 ### 3. Create the zo.space routes
@@ -50,20 +49,19 @@ Then open `https://<your-zo>.zo.space/sensemaking` — you should see the card.
 ## Folder structure
 
 ```
-core/vault/
+vault/
 ├── inbox/        # uncategorized captures
 ├── notes/        # free-text thoughts
 ├── links/        # URL captures
 ├── quotes/       # snippets
 ├── people/       # one note per person
-├── media/        # photos & files + .md sidecar
-├── journal/      # daily log (YYYY-MM-DD.md)
-├── scripts/
-│   ├── capture.ts   # capture pipeline
-│   └── reindex.ts   # rebuild indexes
-├── index.json
-├── tags-index.json
-└── AGENTS.md     # full spec for future AI sessions
+├── media/        # photos + attachments
+├── journal/      # daily log
+├── mesh/         # mesh peers registry
+├── scripts/      # capture.ts + reindex.ts
+├── AGENTS.md     # spec for AI sessions
+├── index.json    # full vault index
+└── tags-index.json
 ```
 
 ## Conventions

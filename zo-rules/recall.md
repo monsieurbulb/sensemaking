@@ -15,10 +15,10 @@ After handling, reply on the SAME channel. Keep it terse.
 
 IF NO QUERY SHORTCUT MATCHES, run the sense-making recall pipeline:
 
-1. Read /home/workspace/core/vault/AGENTS.md if you haven't this session.
-2. Start with /home/workspace/core/vault/index.json for an overview, and /home/workspace/core/vault/tags-index.json for tag→path lookups.
+1. Read /home/workspace/vault/AGENTS.md if you haven't this session.
+2. Start with /home/workspace/vault/index.json for an overview, and /home/workspace/vault/tags-index.json for tag→path lookups.
 3. For tag/topic/people queries, filter index.json by frontmatter (tags, people).
-4. For semantic queries, ripgrep the vault: `rg -i "<term>" /home/workspace/core/vault --type md`.
+4. For semantic queries, ripgrep the vault: `rg -i "<term>" /home/workspace/vault --type md`.
 5. Read the matching note bodies before answering.
 6. Always cite filenames as `path/to/note.md` so the user can open them in Obsidian. Use file mentions where appropriate.
 7. If the user asks for synthesis (draft a paragraph, find gaps, suggest connections), pull the source notes first and quote/paraphrase from them — never invent content.
