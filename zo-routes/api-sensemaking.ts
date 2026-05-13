@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { readFileSync, existsSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, existsSync, unlinkSync, writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, basename } from "node:path";
 
 const VAULT = "/home/workspace/core/vault";
@@ -51,7 +51,12 @@ function parseNote(content: string): Partial<Entry> {
   };
 }
 
+function titleFromPath(path: string): string {
+  return basename(path, ".md").replace(/^\d{4}-\d{2}-\d{2}-\d{4}-/, "").replace(/-/g, " ");
+}
+
 function getMediaFile(notePath: string): string | null {
+  const mediaDir = join(VAULT, "media");
   const base = notePath.replace(/^notes\//, "media/").replace(/\.md$/, "");
   const exts = [".pdf", ".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".mp3"];
   for (const ext of exts) {
@@ -128,13 +133,7 @@ export default async (c: Context) => {
       }
     }
     topTags.sort((a, b) => b[1] - a[1]);
-    return c.json({
-      total: entries.length,
-      byType,
-      topTags: topTags.slice(0, 20).map(([tag, count]) => ({ tag, count })),
-      recent: entries.slice(-10).reverse().map(e => ({ path: e.path, type: e.type, created: e.created, tags: e.tags, people: e.people, intent: e.intent, title: basename(e.path, ".md").replace(/^\d{4}-\d{2}-\d{2}(-\d{1,2}-\d{1,2}-)?/, "").replace(/-/g, " ") })),
-      vault: VAULT,
-    });
+    return c.json({ total: entries.length, byType, topTags: topTags.slice(0, 20), recent: entries.slice(-10).reverse(), vault: VAULT });
   }
 
   if (action === "read") {
@@ -164,8 +163,7 @@ export default async (c: Context) => {
     const matches: [Entry, number][] = [];
     for (const e of entries) {
       let score = 0;
-      const title = basename(e.path, ".md").replace(/^\d{4}-\d{2}-\d{2}(-\d{1,2}-\d{1,2}-)?/, "").replace(/-/g, " ");
-      if (title.toLowerCase().includes(needle)) score += 5;
+      if (e.title.toLowerCase().includes(needle)) score += 5;
       if (e.intent.toLowerCase().includes(needle)) score += 4;
       if (e.tags.some(t => t.toLowerCase().includes(needle))) score += 3;
       if (e.people.some(p => p.toLowerCase().includes(needle))) score += 3;
@@ -176,7 +174,44 @@ export default async (c: Context) => {
       if (score > 0) matches.push([e, score]);
     }
     matches.sort((a, b) => b[1] - a[1]);
-    return c.json({ results: matches.map(([e]) => ({ path: e.path, type: e.type, created: e.created, tags: e.tags, people: e.people, intent: e.intent, title: basename(e.path, ".md").replace(/^\d{4}-\d{2}-\d{2}(-\d{1,2}-\d{1,2}-)?/, "").replace(/-/g, " ") })) });
+    return c.json({ results: matches.map(([e]) => e) });
+  }
+
+  if (action === "shortcut") {
+    const cmd = url.searchParams.get("cmd") ?? "";
+
+    if (cmd === "ln") {
+      const entries = loadIndex();
+      if (entries.length === 0) return c.json({ error: "no notes yet" }, 404);
+      const last = entries[entries.length - 1];
+      try {
+        const content = readFileSync(join(VAULT, last.path), "utf8");
+        return c.json({ path: last.path, content, intent: last.intent, tags: last.tags, people: last.people, created: last.created, type: last.type });
+      } catch {
+        return c.json({ error: "file not found" }, 404);
+      }
+    }
+
+    if (cmd === "nn") {
+      const entries = loadIndex();
+      const today = new Date().toISOString().slice(0, 10);
+      const todayNotes = entries.filter(e => e.created.slice(0, 10) === today).reverse();
+      return c.json({ notes: todayNotes.map(e => ({ path: e.path, type: e.type, title: basename(e.path, ".md").replace(/^\d{4}-\d{2}-\d{2}(-\d{1,2}-\d{1,2}-)?/, "").replace(/-/g, " "), tags: e.tags ?? [], created: e.created })) });
+    }
+
+    if (cmd === "t") {
+      const tagIndex = loadTagIndex();
+      const tags = Object.keys(tagIndex).sort();
+      return c.json({ tags });
+    }
+
+    if (cmd === "shorts") {
+      const p = "/home/workspace/sensemaking/docs/SHORTCUTS.md";
+      if (!existsSync(p)) return c.json({ error: "shortcuts doc not found" }, 404);
+      return c.json({ content: readFileSync(p, "utf8") });
+    }
+
+    return c.json({ error: "unknown shortcut", hint: "try ln, nn, t, or shorts" }, 400);
   }
 
   return c.json({ error: "unknown action" }, 400);
