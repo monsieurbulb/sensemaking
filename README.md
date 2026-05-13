@@ -6,10 +6,8 @@ A personal sense-making assistant for Zo Computer. Capture ideas, links, quotes,
 
 ## What it does
 
-- Capture via SMS, email, or chat — text `+capture <anything>` and it gets filed
-- Auto-tagging and indexing
-- Dashboard at `https://<your-zo>.zo.space/sensemaking` to browse, search, and view everything
-- Plain Markdown in standard folder structure — open it in Obsidian
+- Capture ideas from your phone with `!n <text>` — files straight into your vault
+- Full
 
 ## Setup on your Zo Computer
 
@@ -43,7 +41,7 @@ Go to [Settings > Rules](/?t=settings&s=ai&d=rules) and add two rules:
 
 ### 5. Test from your phone
 
-Text your Zo: `+capture https://example.com — interesting because XYZ`
+Text your Zo: `!n https://example.com — interesting because XYZ`
 
 Then open `https://<your-zo>.zo.space/sensemaking` — you should see the card.
 
