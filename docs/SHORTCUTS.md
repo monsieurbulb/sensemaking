@@ -42,4 +42,4 @@ Matt Black's WIP command shorthand. These work in any AI chat (SMS, Telegram, or
 
 ## Implementation Note
 
-These shortcuts are not currently wired into the capture pipeline. They are documented here as the **spec** for what the AI agent should recognise and handle. The shortcut layer sits on top of the SMS/email/chat capture rule — the AI checks each incoming message for a `!` or `?` prefix before falling back to the standard capture logic.
+These shortcuts are wired into the capture and recall rules. The AI checks each incoming message for a `!`, `?`, or `+` prefix before falling back to the standard capture or recall logic. If you're setting up a new Zo Computer, copy the contents of `zo-rules/capture.md` and `zo-rules/recall.md` into your Zo Rules to activate them.

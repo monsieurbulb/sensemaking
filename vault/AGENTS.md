@@ -38,6 +38,10 @@ url: https://...      # only for type=link
 
 When Richard sends a capture (SMS / email / chat) and the capture rule fires:
 
+**Step 0 — Shortcut check.** If the message starts with `!`, `?`, or `+t`, handle it as a shortcut command per `docs/SHORTCUTS.md` before proceeding. Write commands (`!n`, `!na`, `!rem`, `!t`, `!link`) produce notes/tags. Query commands (`?ln`, `?nn`, `?shorts`, `?t`) display vault state. Tag commands (`+t <tag>`) add existing tags. After handling, reply on the same channel with a one-line confirmation.
+
+**If no shortcut matches:**
+
 1. **Parse** the message. Detect: URL? attached image? long quote? contact card? plain text?
 2. **Classify** into a `type`. Default to `note` if unclear; if very unclear, drop into `inbox/`.
 3. **Extract intent.** If there's an explicit context line (e.g. "met at Liminal, interesting because cosmology + AI"), that becomes `intent`. Otherwise leave `intent` blank.
@@ -47,40 +51,15 @@ When Richard sends a capture (SMS / email / chat) and the capture rule fires:
 7. **Link.** Search the vault for existing notes with strong overlap (shared tags, shared people, shared URL). Add `[[wikilinks]]` in the new note's `links:` frontmatter and inline where natural.
 8. **Write** the note to the right folder. Append the journal bullet for today.
 9. **Update index.** Refresh `index.json` and `tags-index.json` at the vault root.
-10. **Confirm** to the user with the file path, one‑line summary, and any automation created.
-
-## Shortcut Commands
-
-The assistant recognises message prefixes as commands:
-
-**Write (`!`):**
-- `!n <text>` — Create note from text. AI generates title, auto-tags.
-- `!n` (alone) — Persist previous Q&A exchange as a note.
-- `!na <text>` — Append to last note.
-- `!na` (alone) — Confirm append of last agreed text.
-- `!rem <text>` — "Remember that" — persist verbatim, no processing.
-- `!t <tag>` — Create new tag (ask for confirmation).
-- `!t -1, -3` — Reject suggested tags #1 and #3.
-- `!link <note>` — Add link from current note, then confirm.
-
-**Query (`?`):**
-- `?ln` — Display last note (full + metadata).
-- `?nn` — List new tagged notes from this session.
-- `?shorts` — List all shortcuts.
-- `?t` — Display all vault tags.
-
-**Modify (`+`):**
-- `+t <tag>` — Add existing tag to current note (never creates new tags).
-
-See `docs/SHORTCUTS.md` for the full spec including global rules (verbatim text, no invented tags, auto-tag #contacts/#people/#networks, noise-free links).
-
-## Mesh Protocol
-
-The vault supports cross-vault queries between peers running their own sense-making assistants. Each peer exposes a `/api/sensemaking/mesh` endpoint; a local `mesh/peers.json` registry lists trusted peers and their endpoints. Queries fan out and aggregate results from the whole mesh. See `docs/MESH.md` for the full protocol spec.
+10. **Confirm** to the user with the file path, one-line summary, and any automation created.
 
 ## Recall pipeline
 
 When Richard asks a question that grounds in the vault (the recall rule fires):
+
+**Step 0 — Query shortcut check.** If the message starts with `?`, handle it atomically: `?ln` (last note), `?nn` (new session notes), `?shorts` (list shortcuts), `?t` (all tags). Reply on the same channel.
+
+**If no query shortcut matches:**
 
 1. Read `index.json` for an overview.
 2. For tag/topic/people queries, scan matching notes by frontmatter first.
@@ -88,6 +67,18 @@ When Richard asks a question that grounds in the vault (the recall rule fires):
 4. **Always cite filenames** (e.g. `notes/2026-04-28-met-matt.md`) so Richard can open them in Obsidian.
 5. If the answer requires synthesis (drafting a paragraph, finding gaps, suggesting connections), pull the source notes first and quote from them.
 6. Never invent notes. If nothing matches, say so.
+
+## Shortcut Commands
+
+Full spec: `docs/SHORTCUTS.md`. 
+
+**Write:** `!n <text>` / `!n` · `!na <text>` / `!na` · `!rem <text>` · `!t <tag>` · `!link <note>`
+
+**Query:** `?ln` · `?nn` · `?shorts` · `?t`
+
+**Tag:** `+t <tag>`
+
+**Global rules:** Never embellish verbatim text. Never invent tags — ask first. Auto-tag: `#contacts` on contacts, `#people` on names, `#networks` on "network". Noise-free links. Include source images with visual notes.
 
 ## Indexes (kept at vault root)
 
